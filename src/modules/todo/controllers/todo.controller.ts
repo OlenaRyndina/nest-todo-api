@@ -17,9 +17,9 @@ export class TodoController {
 
     @Get(':id')
     async getOneAction(@Param('id') id: string): Promise<Todo> {
-        const todo = this.todoService.findOne(id);
-        if (todo === undefined) {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        const todo = await this.todoService.findOne(id);
+        if (!todo) {
+            throw new NotFoundException('Todo # ' + id + ' does not exist');
         }
         return todo;
     }
@@ -41,7 +41,7 @@ export class TodoController {
         @Body() {title, isCompleted = false}: UpdateDto
     ): Promise<Todo> {
         const todo = await this.todoService.findOne(id);
-        if (todo === undefined) {
+        if (!todo) {
             throw new NotFoundException('Todo # ' + id + ' does not exist');
         }
         todo.title = title;
